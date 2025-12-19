@@ -19,8 +19,7 @@ extern "C" {
 #include "raylib.h"
 }
 
-using std::vector;
-using std::string;
+using namespace std;
 
 enum Suit { DIAMOND=0, CLUB=1, HEART=2, SPADE=3 };
 
@@ -30,9 +29,9 @@ struct Card {
 };
 
 // ---------- constants & helpers ----------
-static const std::array<std::string,4> SUIT_UNI = {"♦","♣","♥","♠"};
-static const std::array<std::string,4> SUIT_LET = {"D","C","H","S"};
-static const std::array<std::string,13> RANK_STR = {"2","3","4","5","6","7","8","9","10","J","Q","K","A"};
+static const array<string,4> SUIT_UNI = {"♦","♣","♥","♠"};
+static const array<string,4> SUIT_LET = {"D","C","H","S"};
+static const array<string,13> RANK_STR = {"2","3","4","5","6","7","8","9","10","J","Q","K","A"};
 
 // deck helpers using std::vector (safer than raw new/delete)
 static vector<Card> make_deck() {
@@ -42,8 +41,8 @@ static vector<Card> make_deck() {
 }
 
 static void shuffle_deck(vector<Card> &deck) {
-    static std::mt19937 rng((unsigned)time(nullptr));
-    std::shuffle(deck.begin(), deck.end(), rng);
+    static mt19937 rng((unsigned)time(nullptr));
+    shuffle(deck.begin(), deck.end(), rng);
 }
 
 // Pop one card from top (back). Returns false if empty.
@@ -62,8 +61,8 @@ string card_small_text(const Card &c) {
 
 // ---------- hand evaluation (1,2,5 support) ----------
 void count_ranks_suits(const vector<Card> &hand, int rankCount[15], int suitCount[4]) {
-    std::fill(rankCount, rankCount+15, 0);
-    std::fill(suitCount, suitCount+4, 0);
+    fill(rankCount, rankCount+15, 0);
+    fill(suitCount, suitCount+4, 0);
     for (auto &c : hand) { rankCount[c.rank]++; suitCount[(int)c.suit]++; }
 }
 
@@ -73,7 +72,7 @@ bool is_straight(vector<Card> hand) {
     if (hand.size()!=5) return false;
     vector<int> r;
     for (auto &c : hand) r.push_back(c.rank);
-    std::sort(r.begin(), r.end());
+    sort(r.begin(), r.end());
     // simple Ace-high only
     for (int i=1;i<5;++i) if (r[i] != r[i-1]+1) return false;
     // check duplicates
@@ -330,9 +329,9 @@ int main() {
             for (int i=0;i<total;++i) {
                 Rectangle r = cardRectAt(i, total, screenW, cardW, cardH, bottomY);
                 if (m.x >= r.x && m.x <= r.x + r.width && m.y >= r.y && m.y <= r.y + r.height) {
-                    auto it = std::find(selected.begin(), selected.end(), i);
+                    auto it = find(selected.begin(), selected.end(), i);
                     if (it != selected.end()) selected.erase(it);
-                    else { selected.push_back(i); std::sort(selected.begin(), selected.end()); }
+                    else { selected.push_back(i); sort(selected.begin(), selected.end()); }
                 }
             }
             // play button
@@ -510,7 +509,7 @@ int main() {
         int bottomY = screenH - cardH - 40;
         for (int i=0;i<total;++i) {
             Rectangle r = cardRectAt(i, total, screenW, cardW, cardH, bottomY);
-            bool sel = (std::find(selected.begin(), selected.end(), i) != selected.end());
+            bool sel = (find(selected.begin(), selected.end(), i) != selected.end());
             Rectangle drawR = r;
             if (sel) drawR.y -= 16;
             // card background
