@@ -31,7 +31,6 @@ struct Card {
 static const array<string,4> SUIT_LET = {"D","C","H","S"};
 static const array<string,13> RANK_STR = {"2","3","4","5","6","7","8","9","10","J","Q","K","A"};
 
-// deck helpers using std::vector (safer than raw new/delete)
 static vector<Card> make_deck() {
     vector<Card> deck; deck.reserve(52);
     for (int s = 0; s < 4; ++s) for (int r = 2; r <= 14; ++r) deck.push_back(Card{r, (Suit)s});
@@ -39,8 +38,7 @@ static vector<Card> make_deck() {
 }
 
 static void shuffle_deck(vector<Card> &deck) {
-    static mt19937 rng((unsigned)time(nullptr));
-    shuffle(deck.begin(), deck.end(), rng);
+    static mt19937 rng((unsigned)time(nullptr)); shuffle(deck.begin(), deck.end(), rng);
 }
 
 // Pop one card from top (back). Returns false if empty.
@@ -64,6 +62,8 @@ void count_ranks_suits(const vector<Card> &hand, int rankCount[15], int suitCoun
     for (auto &c : hand) { rankCount[c.rank]++; suitCount[(int)c.suit]++; }
 }
 
+
+
 bool is_pair(const vector<Card>& hand) { return hand.size()==2 && hand[0].rank==hand[1].rank; }
 
 bool is_straight(vector<Card> hand) {
@@ -77,11 +77,13 @@ bool is_straight(vector<Card> hand) {
     for (int i=1;i<5;++i) if (r[i]==r[i-1]) return false;
     return true;
 }
+
 bool is_flush(const vector<Card>& hand) {
     if (hand.size()!=5) return false;
     for (size_t i=1;i<hand.size();++i) if (hand[i].suit != hand[0].suit) return false;
     return true;
 }
+
 bool is_full_house(const vector<Card>& hand) {
     if (hand.size()!=5) return false;
     int rc[15], sc[4]; count_ranks_suits(hand, rc, sc);
@@ -89,17 +91,22 @@ bool is_full_house(const vector<Card>& hand) {
     for (int r=2;r<=14;++r) { if (rc[r]==3) has3=true; if (rc[r]==2) has2=true; }
     return has3 && has2;
 }
+
 bool is_four_of_a_kind(const vector<Card>& hand) {
     if (hand.size()!=5) return false;
     int rc[15], sc[4]; count_ranks_suits(hand, rc, sc);
     for (int r=2;r<=14;++r) if (rc[r]==4) return true;
     return false;
 }
+
 bool is_straight_flush(const vector<Card>& hand) {
     return is_straight(hand) && is_flush(hand);
 }
 
-enum EvalType { E_INVALID=0, E_SINGLE=1, E_PAIR=2, E_STRAIGHT=3, E_FLUSH=4, E_FULLHOUSE=5, E_FOUR=6, E_SFLUSH=7 };
+enum EvalType { E_INVALID, E_SINGLE, E_PAIR, E_STRAIGHT, E_FLUSH, E_FULLHOUSE, E_FOUR, E_SFLUSH };
+
+
+
 EvalType evaluate_hand(const vector<Card> &hand) {
     if (hand.empty()) return E_INVALID;
     if (hand.size()==1) return E_SINGLE;
@@ -113,6 +120,7 @@ EvalType evaluate_hand(const vector<Card> &hand) {
     }
     return E_INVALID;
 }
+
 int base_points_for_eval(EvalType t) {
     switch(t) {
         case E_SINGLE: return 1;
@@ -147,11 +155,9 @@ struct ChainState {
     EvalType lastHandType = E_INVALID;
     int chainCount = 0; // how many consecutive hands in chain
     double chainMultiplier = 1.0;
-    
     // valid chain sequences: single->pair->straight, pair->flush, straight->fullhouse, etc.
     bool isValidChain(EvalType current) const {
         if (lastHandType == E_INVALID) return false;
-        // Define valid progressions:
         // E_SINGLE -> E_PAIR (1->2)
         // E_PAIR -> E_STRAIGHT (2->3)
         // E_STRAIGHT -> E_FLUSH (3->4)
@@ -160,7 +166,6 @@ struct ChainState {
         // E_FOUR -> E_SFLUSH (6->7)
         // Also allow repeating same hand type
         if (current == lastHandType) return true;
-        
         if (lastHandType == E_SINGLE && current == E_PAIR) return true;
         if (lastHandType == E_PAIR && (current == E_STRAIGHT || current == E_PAIR)) return true;
         if (lastHandType == E_STRAIGHT && (current == E_FLUSH || current == E_STRAIGHT)) return true;
