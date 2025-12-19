@@ -240,41 +240,83 @@ int main() {
     // load suit textures (these textures are just the suit artwork)
     Texture2D tex_spade = {0}, tex_heart = {0}, tex_club = {0}, tex_diamond = {0};
     bool has_spade = false, has_heart=false, has_club=false, has_diamond=false;
-    if (FileExists("assets/spade.png")) { tex_spade = LoadTexture("assets/spade.png"); has_spade = tex_spade.id!=0; }
-    if (FileExists("assets/heart.png")) { tex_heart = LoadTexture("assets/heart.png"); has_heart = tex_heart.id!=0; }
-    if (FileExists("assets/club.png")) { tex_club = LoadTexture("assets/club.png"); has_club = tex_club.id!=0; }
-    if (FileExists("assets/diamond.png")) { tex_diamond = LoadTexture("assets/diamond.png"); has_diamond = tex_diamond.id!=0; }
+    if (FileExists("assets/spade.png")) { 
+        tex_spade = LoadTexture("assets/spade.png"); 
+        has_spade = tex_spade.id!=0; 
+    }
+    if (FileExists("assets/heart.png")) { 
+        tex_heart = LoadTexture("assets/heart.png"); 
+        has_heart = tex_heart.id!=0; 
+    }
+    if (FileExists("assets/club.png")) { 
+        tex_club = LoadTexture("assets/club.png"); 
+        has_club = tex_club.id!=0; 
+    }
+    if (FileExists("assets/diamond.png")) { 
+        tex_diamond = LoadTexture("assets/diamond.png"); 
+        has_diamond = tex_diamond.id!=0; 
+    }
     // load magic card textures (optional)
     Texture2D tex_magicSuitChange = {0}, tex_magicHandScore = {0};
     Texture2D tex_magicCardMult = {0}, tex_magicDiscardRedraw = {0}, tex_magicDrawBoost = {0};
     bool has_magicSuitChange = false, has_magicHandScore = false;
     bool has_magicCardMult = false, has_magicDiscardRedraw = false, has_magicDrawBoost = false;
-    if (FileExists("assets/SuitChange.png")) { tex_magicSuitChange = LoadTexture("assets/SuitChange.png"); has_magicSuitChange = tex_magicSuitChange.id!=0; }
-    if (FileExists("assets/HandScoreUpgrade.png")) { tex_magicHandScore = LoadTexture("assets/HandScoreUpgrade.png"); has_magicHandScore = tex_magicHandScore.id!=0; }
-    if (FileExists("assets/CardMultiplier.png")) { tex_magicCardMult = LoadTexture("assets/CardMultiplier.png"); has_magicCardMult = tex_magicCardMult.id!=0; }
-    if (FileExists("assets/DiscardRedraw.png")) { tex_magicDiscardRedraw = LoadTexture("assets/DiscardRedraw.png"); has_magicDiscardRedraw = tex_magicDiscardRedraw.id!=0; }
-    if (FileExists("assets/DrawBoost.png")) { tex_magicDrawBoost = LoadTexture("assets/DrawBoost.png"); has_magicDrawBoost = tex_magicDrawBoost.id!=0; }
+    if (FileExists("assets/SuitChange.png")) { 
+        tex_magicSuitChange = LoadTexture("assets/SuitChange.png"); 
+        has_magicSuitChange = tex_magicSuitChange.id!=0; 
+    }
+    if (FileExists("assets/HandScoreUpgrade.png")) { 
+        tex_magicHandScore = LoadTexture("assets/HandScoreUpgrade.png"); 
+        has_magicHandScore = tex_magicHandScore.id!=0; 
+    }
+    if (FileExists("assets/CardMultiplier.png")) { 
+        tex_magicCardMult = LoadTexture("assets/CardMultiplier.png"); 
+        has_magicCardMult = tex_magicCardMult.id!=0; 
+    }
+    if (FileExists("assets/DiscardRedraw.png")) { 
+        tex_magicDiscardRedraw = LoadTexture("assets/DiscardRedraw.png"); 
+        has_magicDiscardRedraw = tex_magicDiscardRedraw.id!=0; 
+    }
+    if (FileExists("assets/DrawBoost.png")) { 
+        tex_magicDrawBoost = LoadTexture("assets/DrawBoost.png"); 
+        has_magicDrawBoost = tex_magicDrawBoost.id!=0; 
+    }
     
     // load audio sounds
     Sound snd_start = {0};
     bool has_start = false;
-    if (FileExists("assets/start.mp3")) { snd_start = LoadSound("assets/start.mp3"); has_start = snd_start.frameCount > 0; }
+    if (FileExists("assets/start.mp3")) { 
+        snd_start = LoadSound("assets/start.mp3"); 
+        has_start = snd_start.frameCount > 0; 
+    }
     
     Sound snd_buyCards = {0};
     bool has_buyCards = false;
-    if (FileExists("assets/buyCards.mp3")) { snd_buyCards = LoadSound("assets/buyCards.mp3"); has_buyCards = snd_buyCards.frameCount > 0; }
+    if (FileExists("assets/buyCards.mp3")) { 
+        snd_buyCards = LoadSound("assets/buyCards.mp3"); 
+        has_buyCards = snd_buyCards.frameCount > 0; 
+    }
     
     Sound snd_nextLevel = {0};
     bool has_nextLevel = false;
-    if (FileExists("assets/nextLevel.mp3")) { snd_nextLevel = LoadSound("assets/nextLevel.mp3"); has_nextLevel = snd_nextLevel.frameCount > 0; }
+    if (FileExists("assets/nextLevel.mp3")) { 
+        snd_nextLevel = LoadSound("assets/nextLevel.mp3"); 
+        has_nextLevel = snd_nextLevel.frameCount > 0; 
+    }
     
     Sound snd_gameOver = {0};
     bool has_gameOver = false;
-    if (FileExists("assets/gameOver.mp3")) { snd_gameOver = LoadSound("assets/gameOver.mp3"); has_gameOver = snd_gameOver.frameCount > 0; }
+    if (FileExists("assets/gameOver.mp3")) { 
+        snd_gameOver = LoadSound("assets/gameOver.mp3"); 
+        has_gameOver = snd_gameOver.frameCount > 0; 
+    }
     
     Sound snd_success = {0};
     bool has_success = false;
-    if (FileExists("assets/scccess.mp3")) { snd_success = LoadSound("assets/scccess.mp3"); has_success = snd_success.frameCount > 0; }
+    if (FileExists("assets/scccess.mp3")) { 
+        snd_success = LoadSound("assets/scccess.mp3"); 
+        has_success = snd_success.frameCount > 0; 
+    }
 
     // deck (vector)
     vector<Card> deck = make_deck();
@@ -485,8 +527,11 @@ int main() {
                 deck = make_deck(); shuffle_deck(deck);
                 hand.clear();
                 for (int i=0;i<7 && !deck.empty();++i) { Card c; deal_one(deck, c); hand.push_back(c); }
-                level=1; score=0.0; gold=0.0; levelCleared=false; gameFailed=false; finishedAll=false; magic = MagicEffects(); chain.reset();
-                selected.clear(); logs.clear(); discardPile.clear(); showingShop = false; choosingMagic = false; soundGameOverPlayed = false; soundLevelUpPlayed = false;
+                level=1; score=0.0; gold=0.0; 
+                levelCleared=false; gameFailed=false; finishedAll=false; 
+                magic = MagicEffects(); chain.reset();
+                selected.clear(); logs.clear(); discardPile.clear(); 
+                showingShop = false; choosingMagic = false; soundGameOverPlayed = false; soundLevelUpPlayed = false;
                 pushLog("Restarted.");
                 if (has_start) PlaySound(snd_start);
             }
@@ -661,7 +706,8 @@ int main() {
                     pushLog("Chosen: Card Multiplier - click a card in your hand to select its rank for doubling.");
                     bool chosen=false;
                     while (!chosen && !WindowShouldClose()) {
-                        BeginDrawing(); DrawText("Click a card to select rank for multiplier...", screenW/2 - 200, screenH/2 + 110, 18, YELLOW); EndDrawing();
+                        BeginDrawing(); 
+                        DrawText("Click a card to select rank for multiplier...", screenW/2 - 200, screenH/2 + 110, 18, YELLOW); EndDrawing();
                         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                             Vector2 m2 = GetMousePosition(); int tot=(int)hand.size(); int bY=screenH - cardH - 40;
                             for (int i=0;i<tot;++i) {
