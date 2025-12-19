@@ -28,8 +28,6 @@ struct Card {
     Suit suit;
 };
 
-// ---------- constants & helpers ----------
-static const array<string,4> SUIT_UNI = {"♦","♣","♥","♠"};
 static const array<string,4> SUIT_LET = {"D","C","H","S"};
 static const array<string,13> RANK_STR = {"2","3","4","5","6","7","8","9","10","J","Q","K","A"};
 
