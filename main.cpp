@@ -288,36 +288,24 @@ int main() {
     }
     
     // load audio sounds
-    Sound snd_start = {0};
-    bool has_start = false;
+    Sound snd_start = {0}, snd_buyCards = {0}, snd_nextLevel = {0}, snd_gameOver = {0}, snd_success = {0};
+    bool has_start = false, has_buyCards = false, has_nextLevel = false, has_gameOver = false, has_success = false;
     if (FileExists("assets/start.mp3")) { 
         snd_start = LoadSound("assets/start.mp3"); 
         has_start = snd_start.frameCount > 0; 
     }
-    
-    Sound snd_buyCards = {0};
-    bool has_buyCards = false;
     if (FileExists("assets/buyCards.mp3")) { 
         snd_buyCards = LoadSound("assets/buyCards.mp3"); 
         has_buyCards = snd_buyCards.frameCount > 0; 
     }
-    
-    Sound snd_nextLevel = {0};
-    bool has_nextLevel = false;
     if (FileExists("assets/nextLevel.mp3")) { 
         snd_nextLevel = LoadSound("assets/nextLevel.mp3"); 
         has_nextLevel = snd_nextLevel.frameCount > 0; 
     }
-    
-    Sound snd_gameOver = {0};
-    bool has_gameOver = false;
     if (FileExists("assets/gameOver.mp3")) { 
         snd_gameOver = LoadSound("assets/gameOver.mp3"); 
         has_gameOver = snd_gameOver.frameCount > 0; 
     }
-    
-    Sound snd_success = {0};
-    bool has_success = false;
     if (FileExists("assets/scccess.mp3")) { 
         snd_success = LoadSound("assets/scccess.mp3"); 
         has_success = snd_success.frameCount > 0; 
@@ -329,36 +317,45 @@ int main() {
 
     // player hand (stack-managed vector)
     vector<Card> hand;
-    for (int i = 0; i < 7 && !deck.empty(); ++i) { Card c; deal_one(deck, c); hand.push_back(c); }
+    for (int i = 0; i < 7 && !deck.empty(); ++i) { 
+        Card c; 
+        deal_one(deck, c); 
+        hand.push_back(c); 
+    }
 
-    // discard pile (for Discard/Redraw magic)
-    vector<Card> discardPile;
+    // ===== CARD PILES =====
+    vector<Card> discardPile;  // cards played and discarded
 
-    // game state
+    // ===== GAME PROGRESSION =====
     int level = 1;
     const double levelTarget[4] = {0.0, 55.0, 60.0, 65.0};
     double score = 0.0;
-    double gold = 0.0; // currency earned from scoring
+    double gold = 0.0;  // currency earned from scoring
     bool levelCleared = false;
     bool gameFailed = false;
     bool finishedAll = false;
-    MagicEffects magic; // persistent
-    bool failBlockedByDiscardLogged = false;
-    ChainState chain; // tracking for chain multiplier system
-    bool showingShop = false; // whether shop UI is active
-    bool soundGameOverPlayed = false; // track if end game sound played
-    bool soundLevelUpPlayed = false; // track if level up sound played
 
-    vector<int> selected; // indices
-    vector<string> logs;
-    bool justUsedRedraw = false; // skip fail-check immediately after using REDRAW
+    // ===== MAGIC & EFFECTS =====
+    MagicEffects magic;  // persistent across levels
+    ChainState chain;    // hand combo multiplier system
+
+    // ===== UI STATE FLAGS =====
+    bool showingShop = false;           // shop UI active
+    bool soundGameOverPlayed = false;   // end-game sound played flag
+    bool soundLevelUpPlayed = false;    // level-up sound played flag
+    bool failBlockedByDiscardLogged = false;
+    bool justUsedRedraw = false;        // skip fail-check after REDRAW
+
+    // ===== PLAYER INTERACTION =====
+    vector<int> selected;  // selected card indices
+    vector<string> logs;   // on-screen log messages (max 8 lines)
     auto pushLog = [&](const string &s){ logs.push_back(s); if (logs.size()>8) logs.erase(logs.begin()); };
 
+    // Initialize log and start game
     pushLog("Welcome. Multi-select cards then PLAY. Use PASS to skip.");
-    
-    // Play start sound
     if (has_start) PlaySound(snd_start);
 
+    // ===== UI BUTTONS =====
     Rectangle playBtn{ screenW-220, screenH-120, 90, 40 };
     Rectangle passBtn{ screenW-120, screenH-120, 90, 40 };
     Rectangle redrawBtn{ screenW-220, screenH-170, 90, 40 };
