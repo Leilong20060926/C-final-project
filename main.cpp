@@ -62,8 +62,6 @@ void count_ranks_suits(const vector<Card> &hand, int rankCount[15], int suitCoun
     for (auto &c : hand) { rankCount[c.rank]++; suitCount[(int)c.suit]++; }
 }
 
-
-
 bool is_pair(const vector<Card>& hand) { return hand.size()==2 && hand[0].rank==hand[1].rank; }
 
 bool is_straight(vector<Card> hand) {
@@ -104,8 +102,6 @@ bool is_straight_flush(const vector<Card>& hand) {
 }
 
 enum EvalType { E_INVALID, E_SINGLE, E_PAIR, E_STRAIGHT, E_FLUSH, E_FULLHOUSE, E_FOUR, E_SFLUSH };
-
-
 
 EvalType evaluate_hand(const vector<Card> &hand) {
     if (hand.empty()) return E_INVALID;
@@ -349,8 +345,10 @@ int main() {
     // ===== PLAYER INTERACTION =====
     vector<int> selected;  // selected card indices
     vector<string> logs;   // on-screen log messages (max 8 lines)
-    auto pushLog = [&](const string &s){ logs.push_back(s); if (logs.size()>8) logs.erase(logs.begin()); };
-
+    auto pushLog = [&](const string &s){ 
+        logs.push_back(s); 
+        if (logs.size()>8) logs.erase(logs.begin()); 
+    };
     // Initialize log and start game
     pushLog("Welcome. Multi-select cards then PLAY. Use PASS to skip.");
     if (has_start) PlaySound(snd_start);
@@ -545,11 +543,12 @@ int main() {
                20, 10, infoTextSize, RAYWHITE);
         // logs
         int infoX=20, infoY=50;
-        DrawRectangleLines(infoX-6, infoY-6, 420, 200, BLACK);
+        DrawRectangleLines(infoX-6, infoY-6, 500, 200, BLACK);
         DrawText("Log:", infoX, infoY, 18, RAYWHITE);
-        for (size_t i=0;i<logs.size();++i) DrawText(logs[i].c_str(), infoX, infoY + 24 + (int)i*20, 16, RAYWHITE);
+        for (size_t i=0;i<logs.size();++i) 
+        DrawText(logs[i].c_str(), infoX, infoY + 24 + (int)i*20, 16, RAYWHITE);
 
-        // draw player's hand
+        // ===== Draw all cards in player's hand =====
         int total = (int)hand.size();
         int bottomY = screenH - cardH - 40;
         for (int i=0;i<total;++i) {
@@ -557,10 +556,9 @@ int main() {
             bool sel = (find(selected.begin(), selected.end(), i) != selected.end());
             Rectangle drawR = r;
             if (sel) drawR.y -= 16;
-            // card background
             DrawRectangleRec(drawR, sel ? SKYBLUE : RAYWHITE);
             DrawRectangleLinesEx(drawR, 2, BLACK);
-            // draw suit texture centered inside card
+            // ===== Draw suit texture (symbol) centered inside card =====
             Texture2D *tex = nullptr;
             switch (hand[i].suit) {
                 case SPADE: if (has_spade) tex = &tex_spade; break;
@@ -568,28 +566,37 @@ int main() {
                 case CLUB: if (has_club) tex = &tex_club; break;
                 case DIAMOND: if (has_diamond) tex = &tex_diamond; break;
             }
+            
             if (tex) {
-                // scale suit texture to fit
+                // Calculate proper scale for suit texture to fit inside card
                 float tw = (float)tex->width;
                 float th = (float)tex->height;
-                float scale = suitScale * (float)cardW / tw * 0.8f; // adjust
+                float scale = suitScale * (float)cardW / tw * 0.8f;  // scale factor
+                // Source rectangle (full texture)
                 Rectangle src{0,0, tw, th};
-                Rectangle dest{ drawR.x + drawR.width/2 - (tw*scale)/2, drawR.y + drawR.height/2 - (th*scale)/2,
+                // Destination rectangle (centered inside card)
+                Rectangle dest{ drawR.x + drawR.width/2 - (tw*scale)/2, 
+                                drawR.y + drawR.height/2 - (th*scale)/2,
                                 tw*scale, th*scale };
+                // Draw the suit texture
                 DrawTexturePro(*tex, src, dest, Vector2{0,0}, 0.0f, RAYWHITE);
             } else {
-                // fallback: draw a small circle to indicate suit
+                // Fallback: if suit texture not loaded, draw a small gray circle
                 Vector2 center{ drawR.x + drawR.width/2, drawR.y + drawR.height/2 };
                 DrawCircleV(center, 14, LIGHTGRAY);
             }
-            // draw top text (rank only)
-            string top = card_top_text(hand[i]);
+            
+            // ===== Draw card rank text (A, K, Q, J, 2-10) =====
+            string top = card_top_text(hand[i]);  // get rank string
+            // Hearts and Diamonds are red; Spades and Clubs are black
             Color topc = ( hand[i].suit == HEART || hand[i].suit == DIAMOND ) ? RED : BLACK;
+            // Draw rank in top-left corner
             DrawText(top.c_str(), (int)drawR.x + 6, (int)drawR.y + 6, cardTextSize, topc);
-            // draw bottom-right text (same rank as top)
+            // Draw rank in bottom-right corner (symmetric design)
             string bottom = card_top_text(hand[i]);
             int textW = MeasureText(bottom.c_str(), cardTextSize);
-            DrawText(bottom.c_str(), (int)(drawR.x + drawR.width - textW - 6), (int)(drawR.y + drawR.height - (cardTextSize + 6)), cardTextSize, topc);
+            DrawText(bottom.c_str(), (int)(drawR.x + drawR.width - textW - 6), 
+                    (int)(drawR.y + drawR.height - (cardTextSize + 6)), cardTextSize, topc);
         }
 
         // draw buttons
@@ -677,19 +684,20 @@ int main() {
                 };
                 // opt1: HandScoreUpgrade (+3 to pairs)
                 if (m.x >= opt1.x && m.x <= opt1.x + opt1.width && m.y >= opt1.y && m.y <= opt1.y + opt1.height) {
-                    magic.add_pair += 3; finishChoose("Chosen: Hand Score Upgrade (+3 to Pairs)");
+                    magic.add_pair += 3; 
+                    finishChoose("Chosen: Hand Score Upgrade (+3 to Pairs)");
                 }
                 // opt2: SuitChange (click a card to cycle suit)
                 else if (m.x >= opt2.x && m.x <= opt2.x + opt2.width && m.y >= opt2.y && m.y <= opt2.y + opt2.height) {
-                    pushLog("Chosen: Suit Change - click a card to change its suit.");
+                    pushLog("Chosen: Suit Change - click a card to change its suit."); 
                     bool changed=false;
                     while (!changed && !WindowShouldClose()) {
                         BeginDrawing();
                         DrawText("Click a card to change its suit...", screenW/2 - 140, screenH/2 + 110, 18, YELLOW);
                         EndDrawing();
                         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                            Vector2 m2 = GetMousePosition();
-                            int tot = (int)hand.size();
+                            Vector2 m2 = GetMousePosition(); 
+                            int tot = (int)hand.size(); 
                             int bY = screenH - cardH - 40;
                             for (int i=0;i<tot;++i) {
                                 Rectangle r = cardRectAt(i, tot, screenW, cardW, cardH, bY);
@@ -709,7 +717,8 @@ int main() {
                     bool chosen=false;
                     while (!chosen && !WindowShouldClose()) {
                         BeginDrawing(); 
-                        DrawText("Click a card to select rank for multiplier...", screenW/2 - 200, screenH/2 + 110, 18, YELLOW); EndDrawing();
+                        DrawText("Click a card to select rank for multiplier...", screenW/2 - 200, screenH/2 + 110, 18, YELLOW); 
+                        EndDrawing();
                         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                             Vector2 m2 = GetMousePosition(); int tot=(int)hand.size(); int bY=screenH - cardH - 40;
                             for (int i=0;i<tot;++i) {
@@ -717,11 +726,12 @@ int main() {
                                 if (m2.x >= r.x && m2.x <= r.x + r.width && m2.y >= r.y && m2.y <= r.y + r.height) {
                                     magic.cardMultiplierRank = hand[i].rank;
                                     magic.cardMultiplierFactor = 2; // double points
-                                    pushLog(TextFormat("Card Multiplier set to rank %s (x%d)", RANK_STR[magic.cardMultiplierRank-2].c_str(), magic.cardMultiplierFactor));
-                                    chosen=true; break;
-                                }
-                            }
-                        }
+                                    pushLog(TextFormat("Card Multiplier set to rank %s (x%d)", 
+                                        RANK_STR[magic.cardMultiplierRank-2].c_str(), magic.cardMultiplierFactor));
+                                    chosen=true; break; 
+                                } 
+                            } 
+                        } 
                     }
                     finishChoose("Card Multiplier applied.");
                 }
@@ -890,7 +900,6 @@ int main() {
     if (has_gameOver) UnloadSound(snd_gameOver);
     if (has_success) UnloadSound(snd_success);
     CloseAudioDevice();
-    // vectors clean up automatically
     CloseWindow();
     return 0;
 }
