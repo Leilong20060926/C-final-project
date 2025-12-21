@@ -326,7 +326,7 @@ int main() {
     int level = 1;
     const double levelTarget[4] = {0.0, 55.0, 60.0, 65.0};
     double score = 0.0;
-    double gold = 0.0;  // currency earned from scoring
+    double gold = 0.0;
     bool levelCleared = false;
     bool gameFailed = false;
     bool finishedAll = false;
@@ -679,7 +679,8 @@ int main() {
                         pushLog("All levels cleared!"); 
                     } else { 
                         if (has_nextLevel) PlaySound(snd_nextLevel);
-                        pushLog(TextFormat("Starting Level %d (target %d)", level, levelTarget[level])); 
+                        pushLog(TextFormat("Starting Level %d (target %d)"
+                            , level, levelTarget[level])); 
                     } 
                 };
                 // opt1: HandScoreUpgrade (+3 to pairs)
