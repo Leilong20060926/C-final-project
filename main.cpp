@@ -76,7 +76,7 @@ bool is_straight(vector<Card> hand) {
 
 bool is_flush(const vector<Card>& hand) {
     if (hand.size()!=5) return false;
-    for (size_t i=1;i<hand.size();++i) if (hand[i].suit != hand[0].suit) return false;
+    for (int i=1;i<5;++i) if (hand[i].suit != hand[0].suit) return false;
     return true;
 }
 
