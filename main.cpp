@@ -71,8 +71,6 @@ bool is_straight(vector<Card> hand) {
     sort(r.begin(), r.end());
     // simple Ace-high only
     for (int i=1;i<5;++i) if (r[i] != r[i-1]+1) return false;
-    // check duplicates
-    for (int i=1;i<5;++i) if (r[i]==r[i-1]) return false;
     return true;
 }
 
