@@ -82,14 +82,14 @@ bool is_flush(const vector<Card>& hand) {
 
 bool is_full_house(const vector<Card>& hand) {
     if (hand.size()!=5) return false;
-    int rc[15], sc[4]; count_ranks_suits(hand, rc, sc);
+    int rc[15], sc[4]; count_ranks_suits(hand, rc, sc); 
     bool has3=false, has2=false;
     for (int r=2;r<=14;++r) { if (rc[r]==3) has3=true; if (rc[r]==2) has2=true; }
     return has3 && has2;
 }
 
 bool is_four_of_a_kind(const vector<Card>& hand) {
-    if (hand.size()!=5) return false;
+    if (hand.size()!=5) return false; 
     int rc[15], sc[4]; count_ranks_suits(hand, rc, sc);
     for (int r=2;r<=14;++r) if (rc[r]==4) return true;
     return false;
